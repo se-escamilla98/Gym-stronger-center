@@ -138,7 +138,7 @@ fun DrawerMenu(
 
         //Footer
         Text(
-            text="@ 2025 Burger App",
+            text="@ 2025 Lightweigth baby.inc",
             style=MaterialTheme.typography.bodySmall,
             modifier=Modifier
                 .fillMaxWidth()

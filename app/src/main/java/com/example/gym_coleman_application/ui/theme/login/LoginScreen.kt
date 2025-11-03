@@ -57,7 +57,7 @@ fun LoginScreen(
 
     // darkColorScheme  es una funcion de material3 que define un color oscuro
     val ColorScheme = darkColorScheme(
-        primary= Color(0xFF98222E),
+        primary= Color(0x97225798),
         onPrimary = Color.White,
         onSurface = Color(0xFF333333), //Gris
     ) // fin dark
