@@ -18,36 +18,41 @@ import androidx.core.view.WindowCompat
 
 // --- Paleta para Modo Oscuro usando nuestros nuevos colores ---
 private val DarkColorScheme = darkColorScheme(
-    primary = VividRed,            // Color principal para acciones (botones, etc.)
-    onPrimary = Color.White,       // Color del texto sobre el color primario
-    secondary = LightGray,         // Color secundario (para filtros, chips, etc.)
-    onSecondary = RichBlack,       // Texto sobre el color secundario
-    background = DarkJungleGreen,  // Fondo general de la app
-    onBackground = LightGray,      // Texto sobre el fondo general
-    surface = RichBlack,           // Fondo para superficies (tarjetas, menús)
-    onSurface = LightGray,         // Texto sobre las superficies
-    error = VividRed,              // Color para errores
-    onError = Color.White
+    primary = BrandRedDark,
+    onPrimary = TextPrimaryDark,
+    secondary = TextSecondaryDark,
+    onSecondary = DarkBG,
+    background = DarkBG,
+    onBackground = TextPrimaryDark,
+    surface = DarkSurface,
+    onSurface = TextPrimaryDark,
+    surfaceContainerLow = DarkSurface, // Para el color del menú lateral
+    primaryContainer = BrandRedDark,   // Fondo del header del menú
+    onPrimaryContainer = TextPrimaryDark, // Texto del header del menú
+    error = BrandRedDark,
+    onError = TextPrimaryDark
 )
 
 // --- Paleta para Modo Claro usando nuestros nuevos colores ---
 private val LightColorScheme = lightColorScheme(
-    primary = FireEngineRed,       // Color principal
-    onPrimary = Color.White,       // Texto sobre el primario
-    secondary = DarkGray,          // Color secundario
-    onSecondary = Color.White,     // Texto sobre el secundario
-    background = Alabaster,        // Fondo general
-    onBackground = Charcoal,       // Texto sobre el fondo
-    surface = White,               // Fondo para superficies
-    onSurface = Charcoal,          // Texto sobre las superficies
-    error = FireEngineRed,         // Color para errores
+    primary = BrandRedLight,
+    onPrimary = Color.White,
+    secondary = TextSecondaryLight,
+    onSecondary = Color.White,
+    background = LightBG,
+    onBackground = TextPrimaryLight,
+    surface = LightSurface,
+    onSurface = TextPrimaryLight,
+    surfaceContainerLow = LightSurface, // Color del menú lateral
+    primaryContainer = BrandRedLight,   // Fondo del header del menú
+    onPrimaryContainer = Color.White,   // Texto del header del menú
+    error = BrandRedLight,
     onError = Color.White
 )
 
 @Composable
 fun GymColemanApplicationTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // El theming dinámico (Android 12+) no es ideal para una identidad de marca fuerte, lo desactivamos.
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
@@ -56,7 +61,6 @@ fun GymColemanApplicationTheme(
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }

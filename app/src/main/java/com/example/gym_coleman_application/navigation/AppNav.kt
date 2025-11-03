@@ -1,65 +1,84 @@
 package com.example.gym_coleman_application.navigation
 
-
-import android.net.Uri
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import androidx.compose.runtime.Composable
 import com.example.gym_coleman_application.ui.theme.login.LoginScreen
 import com.example.gym_coleman_application.view.DrawerMenu
 import com.example.gym_coleman_application.view.ProductoFormScreen
+import com.example.gym_coleman_application.view.TopBar
+import com.example.gym_coleman_application.view.WelcomeScreen
+import kotlinx.coroutines.launch
 
 @Composable
-fun AppNav(){
-    // Crear navContoller para gestionar la navegacion
-
+fun AppNav() {
     val navController = rememberNavController()
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+    val gesturesEnabled = currentRoute != "login"
 
-    NavHost(navController=navController, startDestination = "login"){
-
-        composable("login"){
-            LoginScreen(navController = navController)
-        }// fin composable 1
-
-        composable(
-            // route="muestraDatos/{username}",
-            route="DrawerMenu/{username}",
-            arguments = listOf(
-                navArgument("username"){
-                    type = NavType.StringType
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        gesturesEnabled = gesturesEnabled,
+        drawerContent = {
+            ModalDrawerSheet(
+                drawerContainerColor = MaterialTheme.colorScheme.surfaceContainerLow
+            ) {
+                val username = navBackStackEntry?.arguments?.getString("username").orEmpty()
+                DrawerMenu(username = username, navController = navController)
+            }
+        }
+    ) {
+        Scaffold(
+            topBar = {
+                if (gesturesEnabled) {
+                    TopBar(onMenuClick = { scope.launch { drawerState.open() } })
                 }
-            )//fin listof
-
-        ) // fin composable 2
-        {// inicio back
-                backStackEntry->
-            val username = backStackEntry.arguments?.getString("username").orEmpty()
-            //        MuestraDatosScreen(username=username, navController = navController)
-            DrawerMenu(username=username, navController = navController)
-        } // fin termino back
-
-        // Enrutamiento para ProductoFormScreen
-
-        composable(
-            route="ProductoFormScreen/{nombre}/{precio}",
-            arguments = listOf(
-                navArgument("nombre"){ type = NavType.StringType },
-                navArgument("precio"){ type = NavType.StringType },
-            )//fin listof
-        )// fin composable 3
-
-        {// inicio back 2
-                backStackEntry->
-            val nombre = Uri.encode(backStackEntry.arguments?.getString("nombre") ?:"")
-
-            val precio = backStackEntry.arguments?.getString("precio") ?:""
-
-
-            ProductoFormScreen( navController = navController,  nombre=nombre, precio=precio)
-        } // fin termino back 2
-
-    }// fin NavHost
-}// fin AppNav
+            }
+        ) { innerPadding ->
+            NavHost(
+                navController = navController,
+                startDestination = "login",
+                modifier = Modifier.padding(innerPadding)
+            ) {
+                composable("login") {
+                    LoginScreen(navController = navController)
+                }
+                composable(
+                    route = "home/{username}",
+                    arguments = listOf(navArgument("username") { type = NavType.StringType })
+                ) { backStackEntry ->
+                    val username = backStackEntry.arguments?.getString("username").orEmpty()
+                    WelcomeScreen(username = username)
+                }
+                composable(
+                    route = "ProductoFormScreen/{nombre}/{precio}",
+                    arguments = listOf(
+                        navArgument("nombre") { type = NavType.StringType },
+                        navArgument("precio") { type = NavType.StringType }
+                    )
+                ) { backStackEntry ->
+                    val nombre = backStackEntry.arguments?.getString("nombre") ?: ""
+                    val precio = backStackEntry.arguments?.getString("precio") ?: ""
+                    ProductoFormScreen(navController = navController, nombre = nombre, precio = precio)
+                }
+            }
+        }
+    }
+}

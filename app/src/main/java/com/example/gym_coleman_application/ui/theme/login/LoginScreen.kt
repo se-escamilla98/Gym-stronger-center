@@ -1,239 +1,89 @@
 package com.example.gym_coleman_application.ui.theme.login
 
-
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import com.example.gym_coleman_application.R
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 
+@Composable
+fun LoginScreen(navController: NavController) {
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 32.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Gym Coleman",
+            style = MaterialTheme.typography.displaySmall,
+            color = MaterialTheme.colorScheme.primary
+        )
+        Spacer(modifier = Modifier.height(48.dp))
 
-@OptIn(ExperimentalMaterial3Api::class)
-// Permite usar funciones Material 3 que son experimentales
-@Composable  // Genera Interfaz Garfica
+        OutlinedTextField(
+            value = username,
+            onValueChange = { username = it },
+            label = { Text("Usuario") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
+        Spacer(modifier = Modifier.height(16.dp))
 
-fun LoginScreen(
-    navController: NavController,
-    vm: LoginViewModel= viewModel()
+        OutlinedTextField(
+            value = password,
+            onValueChange = { password = it },
+            label = { Text("Contraseña") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            visualTransformation = PasswordVisualTransformation()
+        )
+        Spacer(modifier = Modifier.height(24.dp))
 
-){
+        // Muestra un mensaje de error si existe
+        errorMessage?.let { message ->
+            Text(
+                text = message,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+        }
 
-    val state =vm.uiState
-    var showPass by remember{mutableStateOf(false)}
+        Button(
+            onClick = {
+                // Validación simple
+                if (username.isNotBlank() && password == "1234") { // Contraseña de prueba
+                    errorMessage = null // Limpia el error
 
-    // darkColorScheme  es una funcion de material3 que define un color oscuro
-    val ColorScheme = darkColorScheme(
-        primary= Color(0x97225798),
-        onPrimary = Color.White,
-        onSurface = Color(0xFF333333), //Gris
-    ) // fin dark
-
-
-    MaterialTheme(
-        colorScheme = ColorScheme
-    ){ // inicio Aplicar Material
-
-
-
-        Scaffold (
-            // Crea Estuctra basica de la pantalla Se define topBar, BottomBar
-            topBar = {
-                TopAppBar(title = {Text("Mi Primer App",
-                    color =MaterialTheme.colorScheme.onPrimary,
-                )})
-
-                // Crea un AppBar con un titulo
-
-            }// fin topBar
-        ) // fin Scaff
-        {// Inicio Inner
-                innerPadding ->
-            // Representa el espacio interno para que no choque con el topBar
-
-            Column (  //   Colaca los elementos de la Ui
-                modifier = Modifier
-                    .padding( innerPadding)
-                    // Evita que quede oculto
-                    .fillMaxSize() // Hace que la columnna tome el todo el tamaño
-                    .padding(16.dp)
-                    .background(Color(0xFFF0F0F0)), // gris Claro
-                verticalArrangement = Arrangement.spacedBy(20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally  // Centra horizontalmente
-                //Define  que elementos dentro la columna estaran separados por 20.dp
-            )// fin column
-            {// inicio Contenido
-                Text(text="Bienvenido !",
-                    style= MaterialTheme.typography.headlineMedium,
-                    color=MaterialTheme.colorScheme.primary
-
-
-                ) // Muestra un texto simple en la pantalla
-
-
-                Image(  // insertar una imagen en la interfaz
-                    painter= painterResource(id = R.drawable.planes),
-                    contentDescription = "Logo App",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(150.dp),
-                    contentScale = ContentScale.Fit
-                    // Ajusta la imagen para que encaje dentro del espacio
-
-                ) // Fin Image
-
-
-// agregar un espacio entre la imagen y el boton
-
-                Spacer(modifier = Modifier.height(66.dp))
-
-
-
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                )// Fin Row
-                {// Aplica row
-                    Text("Por favor, ingrese su usuario:",
-                        style =MaterialTheme.typography.bodyLarge.copy(
-                            color=MaterialTheme.colorScheme.onSurface.copy(alpha=0.8f),
-                            fontWeight = FontWeight.Bold),
-                        modifier = Modifier
-                            .padding(end=8.dp)
-                    )// fin texto 1
-
-
-
-                } // fin Aplica row
-
-
-                OutlinedTextField(
-                    value=state.username,
-                    onValueChange = vm::onUsernameChange,
-                    label ={Text("Usuario")},
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(0.95f)
-                )
-
-                OutlinedTextField(
-                    value=state.password,
-                    onValueChange = vm::onPasswordChange,
-                    label ={Text("Contraseña")},
-                    singleLine = true,
-                    visualTransformation = if(showPass) VisualTransformation.None else PasswordVisualTransformation(),
-
-                    trailingIcon = {
-                        TextButton(onClick = { showPass = !showPass }) {
-                            Text(if (showPass) "Ocultar" else "Ver")
+                    // --- ¡ESTA ES LA LÓGICA CLAVE! ---
+                    // 1. Navega a la ruta "home" pasando el nombre de usuario.
+                    // 2. Limpia el historial de navegación hasta el login para que el usuario
+                    //    no pueda volver atrás con el botón del sistema.
+                    navController.navigate("home/$username") {
+                        popUpTo("login") {
+                            inclusive = true // También elimina "login" del historial
                         }
-                    },
-                    modifier = Modifier.fillMaxWidth(0.95f)
-
-                )
-
-
-                if(state.error !=null   ){
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        text=state.error ?:"",
-                        color= MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold
-                    )// fin text
-
-                }// fin state
-
-
-
-// agregar un espacio entre la imagen y el boton
-
-                Spacer(modifier = Modifier.height(66.dp))
-
-                Button(onClick = {/* accion futura*/
-                    vm.submit{
-                            user ->
-
-//                    navController.navigate("muestraDatos/$user")  // navega a una pantalla nueva pasando el parametro user
-                        navController.navigate("DrawerMenu/$user")  // navega a una pantalla nueva pasando el parametro user
-
-                        { // inicio navegate
-                            popUpTo("login"){inclusive = true} //  no volver al login con Back
-                            launchSingleTop = true  // evita que se cree una nueva instancia
-
-                        } // fin navegate
-                    }// fin submit
-
-                }, //fin onClick
-                    enabled=!state.isLoading,
-                    modifier = Modifier.fillMaxWidth(0.6f)
-                )//fin Button
-
-
-                {
-                    // Text("Presioname")
-
-                    Text( if (state.isLoading)  "Validando" else "Iniciar  sesion"  )
-
-                } // fin boton
-
-
-            }// fin Contenido
-
-        } // Fin inner
-
-
-    } // fin Aplicar Material
-}// Fin HomeScreen
-
-
-@Preview(showBackground = true) // Genera la vista
-@Composable  // Genera Interfz Garfica
-
-fun LoginScreenPreview(){
-    // Crear un navController de manera ficticia para fines de la vista previa
-    val navController = rememberNavController()
-
-    // Puedes usar un ViewModel simulado aquí si no tienes acceso a uno real
-    val vm = LoginViewModel() // Suponiendo que LoginViewModel está correctamente configurado para la vista previa
-
-    LoginScreen(navController = navController, vm = vm)
-
-
-
-
-}// Fin HomeScreen
+                    }
+                } else {
+                    // Si falla la validación, muestra un error
+                    errorMessage = "Usuario o contraseña incorrectos."
+                }
+            },
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.medium
+        ) {
+            Text(text = "LOGIN", modifier = Modifier.padding(8.dp))
+        }
+    }
+}
